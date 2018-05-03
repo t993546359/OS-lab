@@ -5,7 +5,7 @@
 void bootMain(void) {
 	Elf32_Ehdr *elf;
 	Elf32_Phdr *ph ,*eph;
-	
+	//333
 	uint8_t buf[512 * 200];
 	for(int i = 0 ; i < 200;i++)
 		readSect((void *)buf + i * 512,i + 1);
