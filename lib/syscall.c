@@ -5,6 +5,14 @@
  * io lib here
  * 库函数写在这
  */
+#define MAX_STACK_SIZE 1024 * 4
+#define MAX_PCB_NUM 2 // father process , child processh
+
+#define RUNABLED 0
+#define BLOCKED 1
+#define DEAD 2
+//extern struct ProcessTable PCB[2];
+//extern struct ProcessTable *current;
 char * temp;
 int32_t syscall(int num, uint32_t a1,uint32_t a2,
 		uint32_t a3, uint32_t a4, uint32_t a5)
@@ -17,6 +25,26 @@ int32_t syscall(int num, uint32_t a1,uint32_t a2,
 		
 	return ret;
 }
+
+int fork()
+{
+	return syscall(SYS_fork,0,0,0,0,0);
+}
+
+
+int sleep(uint32_t time)
+{
+	return syscall(SYS_sleep,0,0,time,0,0);
+}
+
+int exit()
+{
+	return syscall(SYS_exit,0,0,0,0,0);
+}
+
+
+
+
 
 char  *convert(unsigned int data, int num)
 {

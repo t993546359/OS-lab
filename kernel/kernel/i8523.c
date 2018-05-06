@@ -1,3 +1,4 @@
+#include "x86.h"
 #define TIMER_PORT 0x40
 #define FREQ_8253 1193182
 #define HZ 100

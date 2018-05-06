@@ -35,6 +35,7 @@ static void setTrap(struct GateDescriptor *ptr, uint32_t selector, uint32_t offs
 void irqEmpty();
 void irqGProtectFault();
 void irqSyscall();
+void irqTimer();
 void vec0();
 void vec1();
 void vec2();
@@ -77,7 +78,8 @@ void initIdt() {
 	setTrap(idt + 14, SEG_KCODE, (uint32_t)vec14, DPL_KERN);
 
 	setTrap(idt + 0xd, SEG_KCODE, (uint32_t)irqGProtectFault, DPL_KERN);
-	
+	//0x20
+	setIntr(idt + 0x20, SEG_KCODE,(uint32_t)irqTimer,DPL_USER);
 	setIntr(idt + 0x80, SEG_KCODE, (uint32_t)irqSyscall, DPL_USER); // for int 0x80, interrupt vector is 0x80, Interruption is disabled
 
 	/* 写入IDT */

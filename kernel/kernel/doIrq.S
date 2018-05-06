@@ -1,5 +1,11 @@
 .code32
 
+.global irqTimer
+irqTimer:
+	pushl $0 // push dummy error code
+	push $0x20 // pusg interrupt vector into kernel
+	jmp asmDoIrq
+
 .global irqEmpty
 irqEmpty:
 	pushl $0 // push dummy error code
@@ -17,15 +23,32 @@ irqSyscall:
 	pushl $0x80 // push interrupt vector into kernel stack
 	jmp asmDoIrq
 
+
+// TODO : EDIT asmDoIrq to switch fork
+// save general registers
+
 .global asmDoIrq
 asmDoIrq:
-	pushal // push process state into kernel stack
+	cli
+	pushal
+	pushl %ds
+	pushl %es
+	pushl %fs
+	pushl %gs
+	//push
+	//pushal // push process state into kernel stack
 	pushl %esp
 	call irqHandle
+
 	addl $4, %esp
+	popl %gs
+	popl %fs
+	popl %es
+	popl %ds
 	popal
 	addl $4, %esp //interrupt vector is on top of kernel stack
 	addl $4, %esp //error code is on top of kernel stack
+	sti
 	iret
 
 #----|-----entry------|-errorcode-|-----id-----|---handler---|

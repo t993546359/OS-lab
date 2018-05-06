@@ -3,7 +3,7 @@
 #include<elf.h>
 SegDesc gdt[NR_SEGMENTS];
 TSS tss;
-
+extern void initProc();
 #define SECTSIZE 512
 
 void waitDisk(void) {
@@ -43,6 +43,8 @@ void initSeg() {
 	//gdt = Global Descriptor Table
 	tss.ss0 = KSEL(SEG_KDATA);
 	tss.esp0 = (128 << 20);
+	initProc();
+
 	asm volatile("ltr %%ax":: "a" (KSEL(SEG_TSS)));
 
 	/*设置正确的段寄存器*/
@@ -124,6 +126,22 @@ void loadUMain(void) {
 		}
 	}
 	volatile uint32_t entry = elf->e_entry;
+	asm volatile("sti"); // 开启中断
 	enterUserSpace(entry);
 }
 
+void set_tss_esp(uint32_t data)
+{
+	tss.esp0 = data;
+}
+
+void set_gdt(uint32_t data)
+{
+	gdt[SEG_UCODE].base_15_0 = data & 0xffff;
+	gdt[SEG_UCODE].base_23_16 = 0xff & (data >> 16);
+	gdt[SEG_UCODE].base_31_24 = data >> 24;
+
+	gdt[SEG_UDATA].base_15_0 = data & 0xffff;
+	gdt[SEG_UDATA].base_23_16 = 0xff & (data >> 16);
+	gdt[SEG_UDATA].base_31_24 = data >> 24;
+}

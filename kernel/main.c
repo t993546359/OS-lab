@@ -3,7 +3,7 @@
 #include "device.h"
 
 void kEntry(void) {
-
+	initTimer() ;// initialize clock out
 	initSerial();// initialize serial port
 	initIdt(); // initialize idt
 	initIntr(); // iniialize 8259a
